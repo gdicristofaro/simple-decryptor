@@ -1,113 +1,135 @@
-import Image from 'next/image'
+'use client';
 
-export default function Home() {
+import { Card, CardContent, FormControl, Grid, InputLabel, MenuItem, Select, Typography } from '@mui/material'
+import { useEffect, useState } from 'react';
+import { CONVERSION_MAP, LetterNumber, convert } from './converter';
+import { styled } from '@mui/system';
+
+const blue = {
+  100: '#DAECFF',
+  200: '#b6daff',
+  400: '#3399FF',
+  500: '#007FFF',
+  600: '#0072E5',
+  900: '#003A75',
+};
+
+const grey = {
+  50: '#F3F6F9',
+  100: '#E5EAF2',
+  200: '#DAE2ED',
+  300: '#C7D0DD',
+  400: '#B0B8C4',
+  500: '#9DA8B7',
+  600: '#6B7A90',
+  700: '#434D5B',
+  800: '#303740',
+  900: '#1C2025',
+};
+
+const Textarea = styled('textarea')(
+  ({ theme }) => `
+  width: 100%;
+  box-sizing: border-box;
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 400;
+  resize: none;
+  line-height: 1.5;
+  min-height: 8rem;
+  padding: 8px 12px;
+  border-radius: 8px;
+  color: ${theme.palette.mode === 'dark' ? grey[300] : grey[900]};
+  background: ${theme.palette.mode === 'dark' ? grey[900] : '#fff'};
+  border: 1px solid ${theme.palette.mode === 'dark' ? grey[700] : grey[200]};
+  box-shadow: 0px 2px 2px ${theme.palette.mode === 'dark' ? grey[900] : grey[50]};
+
+  &:hover {
+    border-color: ${blue[400]};
+  }
+
+  &:focus {
+    border-color: ${blue[400]};
+    box-shadow: 0 0 0 3px ${theme.palette.mode === 'dark' ? blue[600] : blue[200]};
+  }
+
+  // firefox
+  &:focus-visible {
+    outline: 0;
+  }
+`,
+);
+
+
+export default function Main() {
+  let [val, setVal] = useState({
+    text: '',
+    setLetterNumber: 0,
+    convertedText: ''
+  });
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
-
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
+    <main className="flex min-h-screen flex-col items-center justify-between p-3 m-auto max-w-screen-sm">
+      <Grid container spacing={2}>
+        <Grid item xs={12}>
+          <Typography variant="h5" component="h5">
+            Simple Decryptor
+          </Typography>
+        </Grid>
+        <Grid item xs={12}>
+          <Textarea
+            placeholder="Write your text here..."
+            onChange={(evt) => setVal(prevVal => {
+              let text = evt.target.value;
+              let { setLetterNumber } = prevVal;
+              let convertedText = convert(text, setLetterNumber as LetterNumber);
+              return {
+                text,
+                setLetterNumber,
+                convertedText
+              }
+            })} />
+        </Grid>
+        <Grid item xs={12}>
+          <FormControl fullWidth>
+            <InputLabel id="set-number-label">Set Letter</InputLabel>
+            <Select
+              labelId="set-number-label"
+              id="set-number-select"
+              value={val.setLetterNumber}
+              label="Set Letter"
+              className="w-full"
+              onChange={(evt) => setVal(prevVal => {
+                let setLetterNumber = evt.target.value as LetterNumber;
+                let { text } = prevVal;
+                let convertedText = convert(text, setLetterNumber as LetterNumber);
+                return {
+                  text,
+                  setLetterNumber,
+                  convertedText
+                }
+              })}
+            >
+              {Object.keys(CONVERSION_MAP)
+                .map(v => parseInt(v, 10))
+                .sort((a, b) => a - b)
+                .map(num => (<MenuItem key={num} value={num}>{String.fromCharCode(num + 65)}</MenuItem>))}
+            </Select>
+          </FormControl>
+        </Grid>
+        <Grid item xs={12}>
+          <Card>
+            <CardContent>
+              <Typography gutterBottom variant="h5" component="div">
+                Converted Text
+              </Typography>
+                {val.convertedText ?
+                  val.convertedText.split("\n").map((text, idx) => (<span key={idx} className="block">{text}</span>)) :
+                  (<Typography variant='body2' className="italic" color='text.secondary'>No Text Yet...</Typography>)}
+              </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
     </main>
   )
 }
